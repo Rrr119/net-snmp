@@ -136,6 +136,7 @@ SOFTWARE.
 #include <net-snmp/library/snmp_transport.h>
 #include <net-snmp/library/snmp_service.h>
 #include <net-snmp/library/vacm.h>
+#include <net-snmp/library/device_auth.h>
 #if defined(NETSNMP_USE_OPENSSL) && defined(HAVE_LIBSSL)
 #include <openssl/ssl.h>
 #include <net-snmp/library/cert_util.h>
@@ -776,6 +777,8 @@ _init_snmp(void)
 			   NETSNMP_DS_LIB_REVERSE_ENCODE,
 			   NETSNMP_DEFAULT_ASNENCODING_DIRECTION);
 #endif
+
+    netsnmp_device_auth_init();
 }
 
 /*

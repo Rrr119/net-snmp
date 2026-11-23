@@ -1,0 +1,150 @@
+NET-SNMP-DEVICE-AUTH-MIB DEFINITIONS ::= BEGIN
+
+--
+-- Version-based per-device authentication configuration.
+--
+
+IMPORTS
+    netSnmpObjects, netSnmpModuleIDs FROM NET-SNMP-MIB
+
+    OBJECT-TYPE, MODULE-IDENTITY, Integer32
+        FROM SNMPv2-SMI
+
+    RowStatus, StorageType
+        FROM SNMPv2-TC
+
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB;
+
+
+netSnmpDeviceAuthMIB MODULE-IDENTITY
+    LAST-UPDATED "202611230000Z"
+    ORGANIZATION "www.net-snmp.org"
+    CONTACT-INFO
+         "postal:   Wes Hardaker
+                    P.O. Box 382
+                    Davis CA  95617
+
+          email:    net-snmp-coders@lists.sourceforge.net"
+    DESCRIPTION
+        "Version-based per-device authentication configuration.
+
+         This module models the authentication parameters used to
+         communicate with managed devices, selecting the credential
+         type that matches the SNMP version used for each device:
+         a community string for SNMPv1/SNMPv2c devices, or USM
+         parameters for SNMPv3 devices."
+    REVISION     "202611230000Z"
+    DESCRIPTION
+        "First revision."
+    ::= { netSnmpModuleIDs 6 }
+
+
+nsDeviceAuthObjects OBJECT IDENTIFIER ::= { netSnmpObjects 36 }
+
+--
+--  Device authentication table
+--
+
+nsDeviceAuthTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF NsDeviceAuthEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A table of per-device authentication entries.  Each entry
+         holds the SNMP version to use when communicating with one
+         device together with the credentials appropriate for that
+         version."
+    ::= { nsDeviceAuthObjects 1 }
+
+nsDeviceAuthEntry OBJECT-TYPE
+    SYNTAX      NsDeviceAuthEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "Authentication parameters for a single device."
+    INDEX       { IMPLIED nsDeviceAuthDevice }
+    ::= { nsDeviceAuthTable 1 }
+
+NsDeviceAuthEntry ::= SEQUENCE {
+    nsDeviceAuthDevice      SnmpAdminString,
+    nsDeviceAuthVersion     INTEGER,
+    nsDeviceAuthCommunity   SnmpAdminString,
+    nsDeviceAuthSecName     SnmpAdminString,
+    nsDeviceAuthSecLevel    INTEGER,
+    nsDeviceAuthStorage     StorageType,
+    nsDeviceAuthStatus      RowStatus
+}
+
+nsDeviceAuthDevice OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (1..255))
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The name or address of the device this entry applies to."
+    ::= { nsDeviceAuthEntry 1 }
+
+nsDeviceAuthVersion OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    v1(1),
+                    v2c(2),
+                    v3(3)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The SNMP protocol version to use when communicating with
+         this device.  The version determines which credential
+         fields of this entry are meaningful."
+    ::= { nsDeviceAuthEntry 2 }
+
+nsDeviceAuthCommunity OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (0..255))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The community string used to authenticate with this device
+         when nsDeviceAuthVersion is v1 or v2c."
+    ::= { nsDeviceAuthEntry 3 }
+
+nsDeviceAuthSecName OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE (0..32))
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The USM security name (user) used to authenticate with this
+         device when nsDeviceAuthVersion is v3."
+    ::= { nsDeviceAuthEntry 4 }
+
+nsDeviceAuthSecLevel OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    noAuthNoPriv(1),
+                    authNoPriv(2),
+                    authPriv(3)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The USM security level used to authenticate with this
+         device when nsDeviceAuthVersion is v3."
+    DEFVAL      { noAuthNoPriv }
+    ::= { nsDeviceAuthEntry 5 }
+
+nsDeviceAuthStorage OBJECT-TYPE
+    SYNTAX      StorageType
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The storage type for this entry."
+    DEFVAL      { nonVolatile }
+    ::= { nsDeviceAuthEntry 6 }
+
+nsDeviceAuthStatus OBJECT-TYPE
+    SYNTAX      RowStatus
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+        "The status of this entry, used to create and delete rows."
+    ::= { nsDeviceAuthEntry 7 }
+
+END

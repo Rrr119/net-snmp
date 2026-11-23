@@ -55,6 +55,7 @@ INCLUDESUBDIRHEADERS=README \
 	container_null.h \
 	data_list.h \
 	default_store.h \
+	device_auth.h \
 	dir_utils.h \
 	fd_event_manager.h \
 	file_utils.h \
@@ -157,7 +158,8 @@ CSRCS=	snmp_client.c mib.c parse.c snmp_api.c snmp.c 		\
 	ucd_compat.c		                                \
 	@other_src_list@ @crypto_files_c@        		\
 	dir_utils.c file_utils.c 	                        \
-	container.c container_binary_array.c	
+	container.c container_binary_array.c			\
+	device_auth.c
 
 OBJS=	snmp_client.o mib.o parse.o snmp_api.o snmp.o 		\
 	snmp_auth.o asn1.o md5.o snmp_parse_args.o		\
@@ -176,7 +178,8 @@ OBJS=	snmp_client.o mib.o parse.o snmp_api.o snmp.o 		\
 	ucd_compat.o                               		\
         @crypto_files_o@ @other_objs_list@ @LIBOBJS@ 		\
 	dir_utils.o file_utils.o 	                        \
-	container.o container_binary_array.o	
+	container.o container_binary_array.o			\
+	device_auth.o
 
 LOBJS=	snmp_client.lo mib.lo parse.lo snmp_api.lo snmp.lo 	\
 	snmp_auth.lo asn1.lo md5.lo snmp_parse_args.lo		\
@@ -195,7 +198,8 @@ LOBJS=	snmp_client.lo mib.lo parse.lo snmp_api.lo snmp.lo 	\
 	ucd_compat.lo		                                \
         @crypto_files_lo@ @other_lobjs_list@ @LTLIBOBJS@        \
 	dir_utils.lo file_utils.lo 	                        \
-	container_null.lo container_list_ssll.lo container_iterator.lo 
+	container_null.lo container_list_ssll.lo container_iterator.lo \
+	device_auth.lo
 
 FTOBJS=	snmp_client.ft mib.ft parse.ft snmp_api.ft snmp.ft 	\
 	snmp_auth.ft asn1.ft md5.ft snmp_parse_args.ft		\
@@ -214,7 +218,8 @@ FTOBJS=	snmp_client.ft mib.ft parse.ft snmp_api.ft snmp.ft 	\
         @other_ftobjs_list@                     		\
 	large_fd_set.ft cert_util.ft snmp_openssl.ft 		\
 	dir_utils.ft file_utils.ft 	                        \
-	container_null.ft container_list_ssll.ft container_iterator.ft
+	container_null.ft container_list_ssll.ft container_iterator.ft \
+	device_auth.ft
 
 # just in case someone wants to remove libtool, change this to OBJS.
 TOBJS=$(LOBJS)
